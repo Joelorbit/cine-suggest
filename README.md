@@ -1,7 +1,3 @@
-
-Perfect! You want your app to have **smart, mood-based and personalized movie suggestions**, not just standard search. Here’s how we can structure your README and feature description to highlight that:
-
-````markdown
 # CineSuggest 🎬
 
 **CineSuggest** is a smart movie recommendation web app built with **React** and **TypeScript**. It helps users discover movies based on their **mood**, **similar movies**, or even get a **surprise random pick**, using the **TMDb API** and **GROQ API**.  
