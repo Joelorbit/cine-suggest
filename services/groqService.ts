@@ -29,7 +29,7 @@ const getGroq = () => {
 const randomFrom = (arr: string[]) =>
   arr[Math.floor(Math.random() * arr.length)];
 
-const decades = ["2000s", "2010s", "2020s"];
+const decades = ["2000s", "2010s", "2020s", "mix of eras"];
 const regions = [
   "American",
   "European",
@@ -37,7 +37,12 @@ const regions = [
   "Middle Eastern",
   "African",
   "Latin American",
-  "International"
+  "International mix",
+  "Nordic",
+  "French",
+  "Japanese",
+  "Korean",
+  "Indian"
 ];
 const tones = [
   "intimate",
@@ -47,7 +52,14 @@ const tones = [
   "emotionally heavy",
   "stylized",
   "character-driven",
-  "visually bold"
+  "visually bold",
+  "mysterious",
+  "dark comedic",
+  "meditative",
+  "surreal",
+  "raw and visceral",
+  "poetic",
+  "experimental"
 ];
 
 /* ────────────────────────────────────────────── */
@@ -55,28 +67,40 @@ const tones = [
 /* ────────────────────────────────────────────── */
 
 const buildSystemInstruction = () => `
-You are a professional film curator creating a modern, diverse movie catalogue.
+You are an elite film curator specializing in mood-based discovery.
 
-Guidelines:
-- Focus primarily on films from the 2000s onward
-- Mix mainstream and arthouse naturally
-- Vary genres, tones, countries, and styles
-- Avoid recommending the same movie twice in one response
-- Avoid clustering too many similar films
-- Prioritize variety and discovery
+CRITICAL RULES:
+- Return exactly 10 movies - no less, no more
+- Each movie MUST be distinct in genre, tone, country, or era
+- NEVER recommend two movies by the same director
+- NEVER recommend sequels or the same franchise twice
+- Prioritize films from 2000-2024, but can include acclaimed classics if they match perfectly
+- Mix: 30% well-known, 70% hidden gems/lesser-known films
+- Vary countries and languages significantly
+- Vary release decades within the specified range
 
-Return valid JSON only:
+SCORING RULES:
+- matchScore 90-100: Perfect emotional/thematic match
+- matchScore 75-89: Strong match with interesting twist
+- matchScore 60-74: Good match but with notable difference
+- Never score below 60
+
+QUALITY STANDARDS:
+- IMDb rating typically 6.5+
+- Films with artistic merit and distinctive voice
+- Avoid low-budget direct-to-streaming unless critically acclaimed
+- Prioritize cinematography, storytelling, emotional impact
+
+Return ONLY valid JSON with this structure:
 {
   "movies": [
     {
-      "title": "Official Title",
-      "matchScore": number,
-      "reason": "Short but meaningful explanation"
+      "title": "Exact Official Title",
+      "matchScore": number (60-100),
+      "reason": "Specific 1-2 sentence explanation connecting the film to the mood/query"
     }
   ]
 }
-
-Return exactly 10 movies.
 `;
 
 /* ────────────────────────────────────────────── */
@@ -96,54 +120,81 @@ export const getMovieRecommendations = async (
 
   if (type === SearchType.VIBE) {
     userPrompt = `
-Create a catalogue of 10 modern films that match this vibe:
+I want to watch a film with this mood/feeling:
 "${query}"
 
-Preferences:
-- Mostly 2000s–2020s
-- Different genres and tones
-- Different countries
-- Each movie should feel distinct
+Deliver 10 modern films that capture this exact emotional/atmospheric essence.
 
-Tone emphasis: ${randomFrom(tones)}
-Region mix: ${randomFrom(regions)}
+REQUIREMENTS:
+✓ Each must authentically match this mood
+✓ Different genres, countries, and styles
+✓ Mix different decades (2000s, 2010s, 2020s)
+✓ Include indie/arthouse gems alongside mainstream
+✓ No similar directors or franchises
+✓ High artistic quality throughout
 
-Do not include these titles:
+EMPHASIS:
+Primary Tone: ${randomFrom(tones)}
+Geographic Mix: ${randomFrom(regions)}
+Include a mix of: dialogue-heavy, visual-driven, music-led, silence-heavy
+
+EXCLUDE these titles (already seen):
 ${excluded || "None"}
+
+After analyzing the mood "${query}", recommend films that truly embody it.
 `;
   } else if (type === SearchType.SIMILAR) {
     userPrompt = `
-I like the film "${query}".
+I loved watching "${query}".
 
-Recommend 10 modern films with similar appeal, but not obvious copies.
-Focus on:
-- Mood and storytelling style
-- Emotional or thematic similarity
-- Variety in execution
+Recommend 10 similar but distinct films based on:
+- Emotional resonance and storytelling approach
+- Visual style or cinematographic philosophy
+- Thematic depth
+- Character-driven or plot-driven similarity
 
-Decade focus: ${randomFrom(decades)}
-Style bias: ${randomFrom(tones)}
+IMPORTANT:
+✓ Don't recommend obvious sequels or very similar films
+✓ Look for thematic/emotional parallels instead of surface-level copying
+✓ Include films from different eras and countries
+✓ Mix mainstream with lesser-known gems
 
-Do not include these titles:
+PRIMARY STYLE FOCUS: ${randomFrom(tones)}
+DECADE PREFERENCE: ${randomFrom(decades)}
+REGION MIX: ${randomFrom(regions)}
+
+EXCLUDE these titles (already seen):
 ${excluded || "None"}
+
+Suggest films that fans of "${query}" would find exciting and fresh.
 `;
   } else {
     userPrompt = `
-Surprise me with a modern movie catalogue.
+Give me a random, eclectic, and discovery-focused modern film catalogue.
 
-Rules:
-- Mostly from 2000s–2020s
-- Wide genre spread
-- Mix of popular and lesser-known films
-- Different countries and filmmaking styles
+Create 10 films that span:
+- Multiple genres and subgenres
+- Various countries and film traditions
+- Mix of eras (2000s to 2020s)
+- High-quality mainstream + hidden gems
+- Different storytelling approaches
 
-Random emphasis:
-Tone: ${randomFrom(tones)}
-Region: ${randomFrom(regions)}
-Decade: ${randomFrom(decades)}
+RANDOMNESS PARAMETERS:
+Primary Tone: ${randomFrom(tones)}
+Region Focus: ${randomFrom(regions)}
+Decade Bias: ${randomFrom(decades)}
 
-Do not include these titles:
+REQUIREMENTS:
+✓ Maximum variety - minimize overlap
+✓ Each film should feel like a discovery
+✓ No franchises or sequels
+✓ Artistic merit is essential
+✓ Range from intimate character studies to epic scope
+
+EXCLUDE these titles (already seen):
 ${excluded || "None"}
+
+Curate a fresh, surprising, high-quality collection that introduces viewers to great cinema.
 `;
   }
 
@@ -155,11 +206,11 @@ ${excluded || "None"}
         { role: "user", content: userPrompt }
       ],
       response_format: { type: "json_object" },
-      temperature: 0.9,
-      top_p: 0.9,
-      presence_penalty: 0.8,
-      frequency_penalty: 0.8,
-      max_tokens: 1800
+      temperature: 0.95,
+      top_p: 0.95,
+      presence_penalty: 1.0,
+      frequency_penalty: 1.0,
+      max_tokens: 2200
     });
 
     const raw = completion.choices[0]?.message?.content ?? "{}";
@@ -190,10 +241,11 @@ ${excluded || "None"}
       });
     }
 
-    /* Self-heal if randomness collapses */
+    /* Self-heal if randomness collapses - retry with better diversity instructions */
     if (final.length < 6) {
+      console.warn(`Only ${final.length} unique films found, retrying with diversity boost...`);
       return getMovieRecommendations(
-        query + " different styles different countries",
+        query + " explore different genres different countries different eras hidden gems",
         type
       );
     }

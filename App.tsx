@@ -83,10 +83,10 @@ const App: React.FC = () => {
             </h1>
           </div>
 
-          <div className="hidden md:flex gap-6 text-sm text-gray-500">
+          <div className="flex gap-3 md:gap-6 text-sm text-gray-500">
             <button 
               onClick={() => setIsAboutOpen(true)}
-              className="hover:text-black cursor-pointer"
+              className="hover:text-black cursor-pointer transition-colors"
             >
               About
             </button>
@@ -202,7 +202,7 @@ const App: React.FC = () => {
 
       {/* ================= FOOTER ================= */}
       <footer className="mt-40 border-t border-gray-200 py-12 text-center text-sm text-gray-400">
-        © 2024 CineSuggest | All Rights Reserved
+        © 2026 CineSuggest | All Rights Reserved
       </footer>
 
       {/* ================= MODAL ================= */}
