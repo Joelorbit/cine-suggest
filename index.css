@@ -6,7 +6,42 @@
    ============================================================================ */
 
 /* ============ DESIGN TOKENS ============ */
+:root[data-theme='light'] {
+  --bg: #f4f4f2;
+  --surface: #ffffff;
+  --surface-elevated: #eeeeea;
+  --surface-raised: #e7e7e2;
+
+  --nav-bg: rgba(255, 255, 255, 0.7);
+
+  --ink: #1e1e1c;
+  --ink-inverse: #ffffff;
+
+  --text-muted: #6b6b66;
+  --text-faint: #9a9a94;
+
+  --line: rgba(30, 30, 28, 0.12);
+  --line-strong: rgba(30, 30, 28, 0.24);
+
+  --accent: #4e572f;
+  --accent-strong: #5f6a3b;
+  --accent-soft: rgba(78, 87, 47, 0.14);
+  --on-accent: #ffffff;
+
+  --complement: #8a6234;
+  --complement-strong: #a06e35;
+  --complement-soft: rgba(138, 98, 52, 0.16);
+
+  --terracotta: #9e5a2a;
+
+  --danger: #b33a2a;
+
+  --dot-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='1.2' fill='%231e1e1c' fill-opacity='0.10'/%3E%3C/svg%3E");
+  --plus-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M14 9v10M9 14h10' fill='none' stroke='%231e1e1c' stroke-opacity='0.08' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
 :root {
+  --nav-bg: rgba(42, 42, 42, 0.7);
   --bg: #232323;
   --surface: #2a2a2a;
   --surface-elevated: #323232;
@@ -87,6 +122,18 @@ body::before {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(211, 213, 208, 0.28);
+}
+
+:root[data-theme='light'] ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+:root[data-theme='light'] ::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme='light'] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
 }
 
 /* ============ FOCUS ============ */

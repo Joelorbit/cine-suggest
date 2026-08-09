@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Search,
   Sparkles,
@@ -7,7 +7,9 @@ import {
   Plus,
   Wand2,
   Waves,
-  Shuffle
+  Shuffle,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 import { SearchType, TMDBMovie } from './types';
@@ -36,6 +38,14 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTrailer, setActiveTrailer] = useState<string | null>(null);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>(
+    () => (localStorage.getItem('cine-theme') as 'dark' | 'light') || 'dark'
+  );
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('cine-theme', theme);
+  }, [theme]);
 
   const handleSearch = async (
     e?: React.FormEvent,
@@ -85,9 +95,9 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen font-sans bg-white text-black">
+    <div className="min-h-screen font-sans text-[var(--ink)]">
       {/* ================= NAV (EyuTheme brandmark) ================= */}
-      <nav className="sticky top-0 z-40 backdrop-blur bg-white/70">
+      <nav className="sticky top-0 z-40 backdrop-blur bg-[var(--nav-bg)]">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3" onClick={() => setResults([])}>
             <span className="relative inline-flex items-center justify-center cursor-pointer">
@@ -96,17 +106,24 @@ const App: React.FC = () => {
               >
                 Ey
               </span>
-              <Plus size={11} strokeWidth={2.4} className="absolute -top-1.5 -right-2.5 text-[#5a6237]" />
+              <Plus size={11} strokeWidth={2.4} className="absolute -top-1.5 -right-2.5 text-[var(--accent)]" />
             </span>
-            <span className="uppercase text-[0.694rem] tracking-[0.08em] text-[#848580]">
+            <span className="uppercase text-[0.694rem] tracking-[0.08em] text-[var(--text-muted)]">
               eyuel.me
             </span>
           </div>
 
-          <div className="flex gap-3 md:gap-6 text-sm text-[#848580]">
+          <div className="flex items-center gap-3 md:gap-6 text-sm text-[var(--text-muted)]">
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              aria-label="Toggle theme"
+              className="hover:text-[var(--ink)] cursor-pointer transition-colors"
+            >
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
             <button
               onClick={() => setIsAboutOpen(true)}
-              className="hover:text-[#d3d5d0] cursor-pointer transition-colors"
+              className="hover:text-[var(--ink)] cursor-pointer transition-colors"
             >
               About
             </button>
@@ -119,7 +136,7 @@ const App: React.FC = () => {
         <section className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr] gap-9 lg:gap-16 items-center pt-[clamp(3rem,8vw,6rem)] pb-12">
           {/* Left: title block */}
           <div>
-            <p className="font-mono uppercase text-[0.694rem] tracking-[0.08em] text-[#5a6237]">
+            <p className="font-mono uppercase text-[0.694rem] tracking-[0.08em] text-[var(--accent)]">
               EyuTaste — Cinema · v6
             </p>
 
@@ -128,10 +145,10 @@ const App: React.FC = () => {
             >
               Cinema
               <br />
-              <em className="italic text-[#b48148]">by feeling.</em>
+              <em className="italic text-[var(--complement)]">by feeling.</em>
             </h2>
 
-            <p className="mt-5 max-w-[46ch] text-[#848580] text-[1.125rem] leading-relaxed">
+            <p className="mt-5 max-w-[46ch] text-[var(--text-muted)] text-[1.125rem] leading-relaxed">
               Discover films through atmosphere, emotion, and cinematic tone —
               not algorithms. Curated by Groq, styled by EyuTaste.
             </p>
@@ -142,7 +159,7 @@ const App: React.FC = () => {
                 type="submit"
                 form="cine-search"
                 disabled={isLoading}
-                className="inline-flex items-center gap-2 rounded-[6px] bg-[#d3d5d0] text-[#232323] text-[0.833rem] font-[550] px-6 py-3 cursor-pointer transition-colors hover:bg-[#c2c4bf] disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-[6px] bg-[var(--ink)] text-[var(--ink-inverse)] text-[0.833rem] font-[550] px-6 py-3 cursor-pointer transition-colors hover:opacity-90 disabled:opacity-50"
               >
                 {isLoading ? (
                   <Loader2 size={16} className="animate-spin" />
@@ -155,14 +172,14 @@ const App: React.FC = () => {
               <button
                 onClick={handleSurprise}
                 disabled={isLoading}
-                className="inline-flex items-center gap-2 rounded-[6px] border border-[rgba(211,213,208,0.28)] text-[0.833rem] font-[550] px-6 py-3 cursor-pointer transition-colors hover:border-[rgba(211,213,208,0.5)]"
+                className="inline-flex items-center gap-2 rounded-[6px] border border-[var(--line-strong)] text-[0.833rem] font-[550] px-6 py-3 cursor-pointer transition-colors hover:border-[var(--line-strong)]"
               >
                 <MousePointer2 size={16} />
                 SURPRISE ME
               </button>
             </div>
 
-            <p className="mt-4 font-mono text-[0.694rem] tracking-[0.08em] text-[#6b6b67]">
+            <p className="mt-4 font-mono text-[0.694rem] tracking-[0.08em] text-[var(--text-faint)]">
               groq llama·3.3-70b · tmdb live · 10 picks
             </p>
           </div>
@@ -171,14 +188,14 @@ const App: React.FC = () => {
           <form
             id="cine-search"
             onSubmit={handleSearch}
-            className="rounded-[10px] border border-[rgba(211,213,208,0.11)] bg-[#2a2a2a] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.25),0_2px_8px_rgba(0,0,0,0.35)] floaty"
+            className="rounded-[10px] border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.25),0_2px_8px_rgba(0,0,0,0.35)] floaty"
           >
-            <p className="uppercase font-mono text-[0.694rem] tracking-[0.08em] text-[#848580] mb-4">
+            <p className="uppercase font-mono text-[0.694rem] tracking-[0.08em] text-[var(--text-muted)] mb-4">
               Describe a feeling
             </p>
 
-            <div className="min-h-[40px] w-full flex items-center gap-3 rounded-[6px] border border-[rgba(211,213,208,0.14)] bg-[#232323] px-3 transition-all focus-within:border-[rgba(90,98,55,0.7)] focus-within:shadow-[0_0_0_3px_rgba(90,98,55,0.2)]">
-              <Search size={16} className="text-[#848580] shrink-0" />
+            <div className="min-h-[40px] w-full flex items-center gap-3 rounded-[6px] border border-[var(--line)] bg-[var(--bg)] px-3 transition-all focus-within:border-[var(--accent-strong)] focus-within:shadow-[0_0_0_3px_var(--accent-soft)]">
+              <Search size={16} className="text-[var(--text-muted)] shrink-0" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -187,7 +204,7 @@ const App: React.FC = () => {
                     ? 'e.g. Quiet rainy nights, neon cities'
                     : 'e.g. Blade Runner 2049'
                 }
-                className="w-full bg-transparent outline-none py-2.5 text-[0.833rem] text-[#d3d5d0] placeholder-[#6b6b67]"
+                className="w-full bg-transparent outline-none py-2.5 text-[0.833rem] text-[var(--ink)] placeholder-[var(--text-faint)]"
               />
             </div>
 
@@ -201,22 +218,22 @@ const App: React.FC = () => {
                       : SearchType.VIBE
                   )
                 }
-                className="group inline-flex items-center gap-2 h-10 uppercase font-mono text-[0.694rem] tracking-[0.08em] px-3.5 rounded-[6px] border border-[rgba(211,213,208,0.28)] transition-all cursor-pointer hover:border-[#b48148] hover:text-[#b48148] active:scale-95"
+                className="group inline-flex items-center gap-2 h-10 uppercase font-mono text-[0.694rem] tracking-[0.08em] px-3.5 rounded-[6px] border border-[var(--line-strong)] transition-all cursor-pointer hover:border-[var(--complement)] hover:text-[var(--complement)] active:scale-95"
               >
                 {searchType === SearchType.VIBE ? (
                   <>
-                    <Waves size={14} className="text-[#5a6237] transition-colors group-hover:text-[#b48148]" />
+                    <Waves size={14} className="text-[var(--accent)] transition-colors group-hover:text-[var(--complement)]" />
                     BY VIBE
                   </>
                 ) : (
                   <>
-                    <Shuffle size={14} className="text-[#b48148] transition-transform group-hover:rotate-180" />
+                    <Shuffle size={14} className="text-[var(--complement)] transition-transform group-hover:rotate-180" />
                     SIMILAR
                   </>
                 )}
               </button>
 
-              <span className="font-mono text-[0.694rem] tracking-[0.08em] text-[#6b6b67]">
+              <span className="font-mono text-[0.694rem] tracking-[0.08em] text-[var(--text-faint)]">
                 enter ↵
               </span>
             </div>
@@ -227,8 +244,8 @@ const App: React.FC = () => {
         <section className="pt-[20vh]">
           {isLoading && (
             <div className="py-24 flex flex-col items-center">
-              <Loader2 size={42} className="animate-spin text-gray-400 mb-4" />
-              <p className="text-gray-400 italic">
+              <Loader2 size={42} className="animate-spin text-[var(--text-muted)] mb-4" />
+              <p className="text-[var(--text-muted)] italic">
                 Browsing the cinema vault…
               </p>
             </div>
@@ -237,10 +254,10 @@ const App: React.FC = () => {
           {!isLoading && results.length > 0 && (
             <section>
               <div className="flex items-center justify-between gap-4 mb-8">
-                <p className="font-mono uppercase text-[0.694rem] tracking-[0.08em] text-[#5a6237]">
+                <p className="font-mono uppercase text-[0.694rem] tracking-[0.08em] text-[var(--accent)]">
                   Curated vault — {results.length} picks
                 </p>
-                <Wand2 size={16} className="text-[#b48148]" />
+                <Wand2 size={16} className="text-[var(--complement)]" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
                 {results.map((movie, idx) => (
@@ -259,7 +276,7 @@ const App: React.FC = () => {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="aspect-[2/3] rounded-xl bg-[#1f1f1f]"
+                  className="aspect-[2/3] rounded-xl bg-[var(--surface-raised)]"
                 />
               ))}
             </div>
@@ -268,7 +285,7 @@ const App: React.FC = () => {
       </main>
 
       {/* ================= FOOTER ================= */}
-      <footer className="mt-40 border-t border-gray-200 py-12 text-center text-sm text-gray-400">
+      <footer className="mt-40 border-t border-[var(--line)] py-12 text-center text-sm text-[var(--text-muted)]">
         © 2026 Eyuel.me — CineSuggest | All Rights Reserved
       </footer>
 

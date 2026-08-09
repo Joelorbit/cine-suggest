@@ -32,10 +32,10 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-200 overflow-hidden max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-[var(--surface)] rounded-2xl sm:rounded-3xl shadow-2xl border border-[var(--line)] overflow-hidden max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
-          className="absolute top-3 sm:top-5 right-3 sm:right-5 p-2 rounded-full hover:bg-gray-100 transition z-10"
+          className="absolute top-3 sm:top-5 right-3 sm:right-5 p-2 rounded-full hover:bg-[var(--surface-elevated)] transition z-10"
         >
           <X size={18} />
         </button>
@@ -45,13 +45,13 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             <h2 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight pr-8 sm:pr-0">
               About CineSuggest
             </h2>
-            <p className="mt-2 text-gray-500 text-xs sm:text-sm max-w-md leading-relaxed">
+            <p className="mt-2 text-[var(--text-muted)] text-xs sm:text-sm max-w-md leading-relaxed">
               A modern catalogue for discovering films through mood,
               atmosphere, and emotional texture.
             </p>
           </header>
 
-          <div className="space-y-4 sm:space-y-6 text-xs sm:text-sm text-gray-600 leading-relaxed">
+          <div className="space-y-4 sm:space-y-6 text-xs sm:text-sm text-[var(--text-muted)] leading-relaxed">
             <Feature
               icon={<Wand2 size={16} className="sm:w-[18px] sm:h-[18px]" />}
               title="Mood-First Discovery"
@@ -71,18 +71,18 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             />
           </div>
 
-          <footer className="pt-5 sm:pt-6 border-t border-gray-200">
+          <footer className="pt-5 sm:pt-6 border-t border-[var(--line)]">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-0">
-              <p className="text-xs text-gray-500">
-                Built with <Heart size={12} className="inline text-red-500 mx-1" /> by{' '}
-                <span className="text-black font-medium">Eyuel</span>
+              <p className="text-xs text-[var(--text-muted)]">
+                Built with <Heart size={12} className="inline text-[var(--danger)] mx-1" /> by{' '}
+                <span className="text-[var(--ink)] font-medium">Eyuel</span>
               </p>
               <div className="flex items-center gap-4">
                 <a
                   href="https://github.com/Joelorbit"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-black transition-colors"
+                  className="text-[var(--text-muted)] hover:text-[var(--ink)] transition-colors"
                   aria-label="GitHub"
                 >
                   <Github size={18} />
@@ -91,7 +91,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                   href="https://eyuelgetachew.vercel.app"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-black transition-colors"
+                  className="text-[var(--text-muted)] hover:text-[var(--ink)] transition-colors"
                   aria-label="Portfolio"
                 >
                   <Globe size={18} />
@@ -115,9 +115,9 @@ const Feature = ({
   text: string;
 }) => (
   <div className="flex gap-4">
-    <div className="mt-1 text-black">{icon}</div>
+    <div className="mt-1 text-[var(--ink)]">{icon}</div>
     <div>
-      <h4 className="font-medium text-black mb-1">{title}</h4>
+      <h4 className="font-medium text-[var(--ink)] mb-1">{title}</h4>
       <p>{text}</p>
     </div>
   </div>

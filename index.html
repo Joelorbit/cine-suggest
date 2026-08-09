@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Eyuel.me — Cinema by Feeling</title>
 
+    <script>
+      (function () {
+        var theme = localStorage.getItem('cine-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -20,46 +27,6 @@
       tailwind.config = {
         theme: {
           extend: {
-            colors: {
-              /* EyuTheme — dark charcoal base, sage ink */
-              white: '#2a2a2a',
-              black: '#d3d5d0',
-              gray: {
-                50: '#1f1f1f',
-                100: '#2a2a2a',
-                200: '#232323',
-                300: '#3c3c3c',
-                400: '#6b6b67',
-                500: '#848580',
-                600: '#9e9f9a',
-                700: '#b8bab3',
-                800: '#c2c4bf',
-                900: '#d3d5d0'
-              },
-              /* EyuTheme accents — olive moss, golden ochre, terracotta */
-              yellow: {
-                50: '#4a3a26',
-                100: '#4a3a26',
-                500: '#b48148',
-                600: '#b48148'
-              },
-              orange: {
-                50: '#3f3323',
-                500: '#b48148',
-                600: '#b48148'
-              },
-              green: {
-                600: '#6c7642',
-                700: '#6c7642'
-              },
-              blue: {
-                600: '#c89254',
-                700: '#b48148'
-              },
-              red: {
-                500: '#b48148'
-              }
-            },
             fontFamily: {
               sans: ['Lexend', 'system-ui', 'sans-serif'],
               serif: ['Outfit', 'system-ui', 'sans-serif'],
@@ -84,8 +51,8 @@
 
     <style>
       body {
-        background-color: #232323;
-        color: #d3d5d0;
+        background-color: var(--bg);
+        color: var(--ink);
         font-family: 'Lexend', system-ui, sans-serif;
         font-optical-sizing: auto;
         font-feature-settings: 'cv11', 'ss01';
@@ -94,6 +61,7 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         overflow-x: hidden;
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
       button,
       input,
