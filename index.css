@@ -1,4 +1,120 @@
-/* Premium Animations & Utilities */
+/* ============================================================================
+   EYUTHEME DESIGN SYSTEM — CineSuggest
+   Dark #232323 canvas, sage ink #d3d5d0, olive moss #5a6237, golden ochre
+   #b48148, terracotta #7e5026. Outfit / Lexend / JetBrains Mono.
+   Fine digital grain = the identity.
+   ============================================================================ */
+
+/* ============ DESIGN TOKENS ============ */
+:root {
+  --bg: #232323;
+  --surface: #2a2a2a;
+  --surface-elevated: #323232;
+  --surface-raised: #3c3c3c;
+
+  --ink: #d3d5d0;
+  --ink-inverse: #232323;
+
+  --text-muted: #848580;
+  --text-faint: #6b6b67;
+
+  --line: rgba(211, 213, 208, 0.14);
+  --line-strong: rgba(211, 213, 208, 0.28);
+
+  --accent: #5a6237;
+  --accent-strong: #6c7642;
+  --accent-soft: rgba(90, 98, 55, 0.2);
+  --on-accent: #d3d5d0;
+
+  --complement: #b48148;
+  --complement-strong: #c89254;
+  --complement-soft: rgba(180, 129, 72, 0.18);
+
+  --terracotta: #7e5026;
+
+  --danger: #9e4235;
+
+  --grain-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='4' seed='42' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='150' height='150' filter='url(%23n)'/%3E%3C/svg%3E");
+  --dot-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='1.2' fill='%23d3d5d0' fill-opacity='0.12'/%3E%3C/svg%3E");
+  --plus-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M14 9v10M9 14h10' fill='none' stroke='%23d3d5d0' stroke-opacity='0.09' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --plus-size: 28px;
+}
+
+/* ============ FILM GRAIN OVERLAY (EyuTheme signature texture) ============ */
+body::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  content: '';
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: var(--plus-pattern), var(--dot-pattern), var(--grain-svg);
+  background-size: var(--plus-size) var(--plus-size), 24px 24px, 200px 200px;
+  background-repeat: repeat;
+  opacity: 0.2;
+}
+
+/* Modal overlays stay charcoal — not sage (overrides CDN color swap) */
+.fixed.inset-0 > .absolute.inset-0 {
+  background-color: rgba(18, 18, 18, 0.82);
+}
+
+.fixed.inset-0 > .absolute.inset-0.backdrop-blur-sm {
+  background-color: rgba(18, 18, 18, 0.7);
+}
+
+/* ============ SELECTION ============ */
+::selection {
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+/* ============ SCROLLBAR ============ */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(5, 5, 5, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(211, 213, 208, 0.14);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(211, 213, 208, 0.28);
+}
+
+/* ============ FOCUS ============ */
+*:focus-visible {
+  outline: 2px solid var(--complement-strong);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ============ INPUTS ============ */
+input::placeholder {
+  color: var(--text-faint);
+}
+
+/* ============ PREMIUM ANIMATIONS & UTILITIES ============ */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.floaty {
+  animation: float 7s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -61,10 +177,10 @@
 
 @keyframes glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 20px rgba(180, 129, 72, 0.2);
   }
   50% {
-    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 30px rgba(180, 129, 72, 0.35);
   }
 }
 
@@ -125,9 +241,9 @@
 .shimmer {
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.03) 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(255, 255, 255, 0.03) 100%
+    rgba(211, 213, 208, 0.03) 0%,
+    rgba(211, 213, 208, 0.08) 50%,
+    rgba(211, 213, 208, 0.03) 100%
   );
   background-size: 1000px 100%;
   animation: shimmer 2s infinite;
@@ -135,15 +251,15 @@
 
 /* Clean Minimal Card */
 .card-minimal {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 12px;
 }
 
 /* Glow Effect */
 .glow-on-focus:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2), 0 0 20px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 0 3px var(--complement-soft), 0 0 20px rgba(180, 129, 72, 0.2);
   animation: glow 2s ease-in-out infinite;
 }
 
@@ -152,40 +268,9 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Selection Styling */
-::selection {
-  background: rgba(59, 130, 246, 0.3);
-  color: #ffffff;
-}
-
 /* Smooth Scrolling */
 html {
   scroll-behavior: smooth;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(5, 5, 5, 0.5);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* Focus Visible for Accessibility */
-*:focus-visible {
-  outline: 2px solid rgba(59, 130, 246, 0.5);
-  outline-offset: 2px;
-  border-radius: 4px;
 }
 
 /* Prevent Layout Shift */

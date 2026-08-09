@@ -3,16 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CineSuggest — A Modern Film Catalogue</title>
+    <title>Eyuel.me — Cinema by Feeling</title>
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Fonts -->
+    <!-- Fonts: EyuTheme — Outfit (display), Lexend (body), JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Lexend:wght@100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
       rel="stylesheet"
     />
 
@@ -21,17 +21,61 @@
         theme: {
           extend: {
             colors: {
-              background: '#ffffff',
-              surface: '#f9fafb',
-              border: '#e5e7eb',
-              accent: '#000000'
+              /* EyuTheme — dark charcoal base, sage ink */
+              white: '#2a2a2a',
+              black: '#d3d5d0',
+              gray: {
+                50: '#1f1f1f',
+                100: '#2a2a2a',
+                200: '#232323',
+                300: '#3c3c3c',
+                400: '#6b6b67',
+                500: '#848580',
+                600: '#9e9f9a',
+                700: '#b8bab3',
+                800: '#c2c4bf',
+                900: '#d3d5d0'
+              },
+              /* EyuTheme accents — olive moss, golden ochre, terracotta */
+              yellow: {
+                50: '#4a3a26',
+                100: '#4a3a26',
+                500: '#b48148',
+                600: '#b48148'
+              },
+              orange: {
+                50: '#3f3323',
+                500: '#b48148',
+                600: '#b48148'
+              },
+              green: {
+                600: '#6c7642',
+                700: '#6c7642'
+              },
+              blue: {
+                600: '#c89254',
+                700: '#b48148'
+              },
+              red: {
+                500: '#b48148'
+              }
             },
             fontFamily: {
-              sans: ['Inter', 'system-ui', 'sans-serif'],
-              serif: ['Playfair Display', 'serif']
+              sans: ['Lexend', 'system-ui', 'sans-serif'],
+              serif: ['Outfit', 'system-ui', 'sans-serif'],
+              mono: ['JetBrains Mono', 'ui-monospace', 'monospace']
             },
             borderRadius: {
-              '4xl': '2rem'
+              '2xl': '0.625rem',
+              '3xl': '0.75rem',
+              '4xl': '0.875rem',
+              xl: '0.5rem',
+              lg: '0.375rem'
+            },
+            boxShadow: {
+              sm: '0 1px 2px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.35)',
+              lg: '0 8px 24px rgba(0,0,0,0.45), 0 32px 96px rgba(0,0,0,0.4)',
+              '2xl': '0 8px 24px rgba(0,0,0,0.45), 0 32px 96px rgba(0,0,0,0.4)'
             }
           }
         }
@@ -40,11 +84,23 @@
 
     <style>
       body {
-        background-color: #ffffff;
-        color: #000000;
+        background-color: #232323;
+        color: #d3d5d0;
+        font-family: 'Lexend', system-ui, sans-serif;
+        font-optical-sizing: auto;
+        font-feature-settings: 'cv11', 'ss01';
+        letter-spacing: -0.006em;
+        line-height: 1.6;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         overflow-x: hidden;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+        color: inherit;
       }
     </style>
 
