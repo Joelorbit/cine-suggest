@@ -36,6 +36,7 @@ const App: React.FC = () => {
   const [searchType, setSearchType] = useState<SearchType>(SearchType.VIBE);
   const [results, setResults] = useState<TMDBMovie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [activeTrailer, setActiveTrailer] = useState<string | null>(null);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>(
@@ -49,20 +50,23 @@ const App: React.FC = () => {
 
   const handleSearch = async (
     e?: React.FormEvent,
-    overrideType?: SearchType
+    overrideType?: SearchType,
+    overrideQuery?: string
   ) => {
     if (e) e.preventDefault();
 
     const currentType = overrideType || searchType;
-    if (currentType !== SearchType.SURPRISE && !query.trim()) return;
+    const activeQuery = overrideQuery !== undefined ? overrideQuery : query;
+    if (currentType !== SearchType.SURPRISE && !activeQuery.trim()) return;
 
     setIsLoading(true);
+    setError(null);
     setResults([]);
 
     try {
-      // 1. Get titles from Groq Llama 3.3 70B
+      // 1. Get titles from Groq AI
       const recommendations = await getMovieRecommendations(
-        query,
+        activeQuery,
         currentType
       );
 
@@ -80,9 +84,15 @@ const App: React.FC = () => {
         })
       );
 
-      setResults(moviesWithMeta.filter((m): m is TMDBMovie => m !== null));
-    } catch (err) {
+      const filtered = moviesWithMeta.filter((m): m is TMDBMovie => m !== null);
+      if (filtered.length === 0) {
+        setError('No matched movies found in TMDB database. Please try another vibe or query.');
+      } else {
+        setResults(filtered);
+      }
+    } catch (err: any) {
       console.error('Search failed', err);
+      setError(err?.message || 'Failed to curate movies. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +101,7 @@ const App: React.FC = () => {
   const handleSurprise = () => {
     const randomVibe = SURPRISE_VIBES[Math.floor(Math.random() * SURPRISE_VIBES.length)];
     setQuery(randomVibe);
-    handleSearch(undefined, SearchType.SURPRISE);
+    handleSearch(undefined, SearchType.SURPRISE, randomVibe);
   };
 
   return (
@@ -180,7 +190,7 @@ const App: React.FC = () => {
             </div>
 
             <p className="mt-4 font-mono text-[0.694rem] tracking-[0.08em] text-[var(--text-faint)]">
-              groq llama·3.3-70b · tmdb live · 10 picks
+              groq neural ai · tmdb live · 10 picks
             </p>
           </div>
 
@@ -251,7 +261,25 @@ const App: React.FC = () => {
             </div>
           )}
 
-          {!isLoading && results.length > 0 && (
+          {!isLoading && error && (
+            <div className="py-16 text-center max-w-lg mx-auto p-6 rounded-xl border border-[var(--line)] bg-[var(--surface)]">
+              <p className="text-sm font-medium text-[var(--accent)] mb-2">
+                Curating Interrupted
+              </p>
+              <p className="text-xs text-[var(--text-muted)] leading-relaxed mb-4">
+                {error}
+              </p>
+              <button
+                type="button"
+                onClick={() => handleSearch()}
+                className="px-4 py-2 text-xs font-mono uppercase tracking-wider rounded-md border border-[var(--line-strong)] hover:border-[var(--complement)] transition-colors cursor-pointer"
+              >
+                Try Again
+              </button>
+            </div>
+          )}
+
+          {!isLoading && !error && results.length > 0 && (
             <section>
               <div className="flex items-center justify-between gap-4 mb-8">
                 <p className="font-mono uppercase text-[0.694rem] tracking-[0.08em] text-[var(--accent)]">
@@ -271,7 +299,7 @@ const App: React.FC = () => {
             </section>
           )}
 
-          {!isLoading && results.length === 0 && !query && (
+          {!isLoading && !error && results.length === 0 && !query && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[1, 2, 3].map((i) => (
                 <div

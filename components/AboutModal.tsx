@@ -61,7 +61,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             <Feature
               icon={<Sparkles size={16} className="sm:w-[18px] sm:h-[18px]" />}
               title="AI-Curated Taste"
-              text="Powered by Groq's Llama 3.3 70B, trained to understand tone, rhythm, and cinematic language."
+              text="Powered by Groq's high-speed inference engine, trained to understand tone, rhythm, and cinematic language."
             />
 
             <Feature

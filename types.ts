@@ -10,6 +10,7 @@ export interface TMDBMovie {
   title: string;
   poster_path: string;
   vote_average: number;
+  vote_count?: number;
   overview: string;
   release_date: string;
   trailerKey?: string;

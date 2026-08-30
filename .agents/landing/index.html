@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en" data-theme="moss-stone" data-mode="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EyuTheme — Agent Skills & Design System</title>
+    <meta name="description" content="A broad Svelte design system and 23-skill engineering pack with semantic tokens, 24 luxury themes, tactile patterns, and Emil Kowalski animation craft." />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Lexend:wght@100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+      rel="stylesheet"
+    />
+    
+    <script>
+      (() => {
+        const stored = localStorage.getItem('eyu-theme') || localStorage.getItem('theme');
+        const savedMode = localStorage.getItem('eyu-mode');
+        const systemMode = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        const fallback = 'moss-stone';
+        const theme = stored === 'light' ? 'eyu-light' : stored === 'dark' ? fallback : stored || fallback;
+        const mode = savedMode === 'light' || savedMode === 'dark' ? savedMode : stored === 'light' || stored === 'dark' ? stored : systemMode;
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.dataset.mode = mode;
+        document.documentElement.style.colorScheme = mode;
+      })();
+    </script>
+    
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <div class="app">
+      <!-- Top Navigation Bar -->
+      <header class="topbar">
+        <div class="shell">
+          <div class="topbar__inner">
+            <a class="brand" href="/" aria-label="EyuTheme home">
+              <span class="brand__mark">E</span>
+              <span class="brand__name">eyutheme</span>
+            </a>
+
+            <nav class="topbar__nav" aria-label="Primary navigation">
+              <a href="#tokens">Tokens</a>
+              <a href="#components">Components</a>
+              <a href="#motion-lab">Motion Lab</a>
+              <a href="#skills">Skills</a>
+              <a href="#install">Install</a>
+              <a href="https://github.com/Joelorbit/Mytheme" target="_blank" rel="noreferrer">
+                <span>GitHub</span>
+                <svg class="icon-inline" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+              </a>
+            </nav>
+
+            <div class="topbar__actions">
+              <!-- Live Theme Picker Dropdown -->
+              <div class="theme-picker">
+                <label class="theme-picker__label caption" for="eyu-theme-picker">Theme preset</label>
+                <div class="theme-picker__control">
+                  <select id="eyu-theme-picker" aria-label="Theme preset">
+                    <!-- Populated dynamically via JS -->
+                  </select>
+                  <span aria-hidden="true" class="select-chevron">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Binary Mode Toggle (Sun / Moon) -->
+              <button
+                type="button"
+                id="mode-toggle-btn"
+                class="toggle toggle--relative"
+                aria-label="Switch theme mode"
+                title="Switch mode"
+              >
+                <svg class="sun-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                <svg class="moon-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/><path d="M19 3v4"/><path d="M21 5h-4"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero pattern-overlay" style="--pattern-image: var(--circuit-pattern); --pattern-size: 40px;">
+          <div class="shell">
+            <div class="hero__grid">
+              
+              <div class="hero__content">
+                <p class="caption hero__eyebrow">Svelte 5 · 23 Agent Skills · Emil Kowalski Motion Craft</p>
+                <h1 class="display display--hero display-lg">Build a sharper frontend.</h1>
+                <p class="hero__lead body-lg">
+                  A broad design system for Eyu brand interfaces: semantic colors, tactile surfaces, technical patterns, resilient states, and components that compose without fighting the project.
+                </p>
+
+                <div class="cluster gap-md">
+                  <a href="#components" class="btn btn--primary btn--lg">Explore components</a>
+                  <a href="#skills" class="btn btn--outline btn--lg">Browse 23 skills</a>
+                  <button type="button" id="hero-toast-btn" class="btn btn--ghost btn--lg">Trigger toast</button>
+                </div>
+
+                <div class="cluster gap-lg hero__status">
+                  <span class="status status--success status--pulse">
+                    <span class="status__dot" aria-hidden="true"></span>
+                    <span class="status__label">System ready</span>
+                  </span>
+                  <span class="mono-sm hero__theme" id="hero-theme-indicator">moss-stone · dark</span>
+                </div>
+              </div>
+
+              <!-- Hero Surface Panel (The Contract) -->
+              <div class="surface-card surface-card--high surface-card--pad-lg surface-card--bordered surface-card--interactive hero__panel">
+                <div class="hero__panel-mark">
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="8" cy="9" r="1"/><circle cx="12" cy="7" r="1"/><circle cx="16" cy="9" r="1"/><path d="M12 21c0-2 1.5-3 3.5-3H17a4 4 0 0 0 4-4"/></svg>
+                </div>
+                <p class="caption">The contract</p>
+                <h2 class="heading heading-md">Meaning before decoration.</h2>
+                <p class="body-sm">
+                  Components consume semantic roles. Themes change the values underneath. Your product stays coherent without losing personality.
+                </p>
+                <div class="hero__mini-grid">
+                  <span style="--swatch: var(--primary)" title="--primary"></span>
+                  <span style="--swatch: var(--secondary)" title="--secondary"></span>
+                  <span style="--swatch: var(--tertiary)" title="--tertiary"></span>
+                  <span style="--swatch: var(--status-success)" title="--status-success"></span>
+                  <span style="--swatch: var(--status-warning)" title="--status-warning"></span>
+                  <span style="--swatch: var(--status-danger)" title="--status-danger"></span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 1: Semantic Layer (Tokens) -->
+        <section id="tokens" class="section">
+          <div class="shell">
+            <div class="section-heading">
+              <div>
+                <p class="caption">01 · Semantic layer</p>
+                <h2 class="heading heading-lg">Color roles that scale.</h2>
+              </div>
+              <p class="section-heading__copy body-md">
+                Choose meaning in components, then let the active theme supply the mood. Every foreground role is paired to its parent surface or fill.
+              </p>
+            </div>
+
+            <!-- Token Groups Grid -->
+            <div class="token-groups" id="token-groups-container">
+              <!-- Rendered dynamically matching Mytheme semanticTokenGroups -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Component Language -->
+        <section id="components" class="section section--components pattern-dots">
+          <div class="shell">
+            <div class="section-heading">
+              <div>
+                <p class="caption">02 · Component language</p>
+                <h2 class="heading heading-lg">Ready for real product work.</h2>
+              </div>
+              <p class="section-heading__copy body-md">
+                Forms, actions, feedback, and surfaces are wired to the same states and tokens you use in production.
+              </p>
+            </div>
+
+            <div class="component-grid">
+              <!-- Card 1: Form field -->
+              <section class="card">
+                <header class="card__head">
+                  <div class="card__headline">
+                    <h3 class="card__title heading heading-sm">Form field</h3>
+                    <p class="card__desc body-sm">A familiar input with hint and error-ready semantics.</p>
+                  </div>
+                </header>
+                <div class="card__body">
+                  <div class="form-stack">
+                    <div class="field">
+                      <label class="field__label body-sm" for="demo-email">Email address</label>
+                      <input id="demo-email" type="email" class="input" placeholder="you@example.com" />
+                      <span class="field__hint mono-xs">We will only use this for account access.</span>
+                    </div>
+                    <div class="field">
+                      <label class="field__label body-sm" for="demo-role">Role</label>
+                      <div class="select-wrapper">
+                        <select id="demo-role" class="select">
+                          <option value="designer">Designer</option>
+                          <option value="engineer">Engineer</option>
+                          <option value="founder">Founder</option>
+                        </select>
+                        <span aria-hidden="true" class="select-chevron"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg></span>
+                      </div>
+                      <span class="field__hint mono-xs">Choose the role that best matches your work.</span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Card 2: Actions -->
+              <section class="card">
+                <header class="card__head">
+                  <div class="card__headline">
+                    <h3 class="card__title heading heading-sm">Actions</h3>
+                    <p class="card__desc body-sm">Primary, secondary, outline, tertiary, link, and danger intent.</p>
+                  </div>
+                </header>
+                <div class="card__body">
+                  <div class="cluster gap-sm" style="flex-wrap: wrap;">
+                    <button class="btn btn--primary btn--sm">Primary</button>
+                    <button class="btn btn--secondary btn--sm">Secondary</button>
+                    <button class="btn btn--tertiary btn--sm">Tertiary</button>
+                    <button class="btn btn--outline btn--sm">Outline</button>
+                    <button class="btn btn--danger btn--sm">Delete</button>
+                    <button class="btn btn--link btn--sm">Learn more</button>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Card 3: Feedback -->
+              <section class="card">
+                <header class="card__head">
+                  <div class="card__headline">
+                    <h3 class="card__title heading heading-sm">Feedback</h3>
+                    <p class="card__desc body-sm">Status roles support calm and clear product states.</p>
+                  </div>
+                </header>
+                <div class="card__body">
+                  <div class="form-stack">
+                    <div class="alert alert--info">
+                      <div class="alert__icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
+                      <div class="alert__content">
+                        <strong class="alert__title">Heads up</strong>
+                        <p class="alert__desc body-xs">This is an informational message using the active theme.</p>
+                      </div>
+                    </div>
+                    <div class="alert alert--success">
+                      <div class="alert__icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+                      <div class="alert__content">
+                        <strong class="alert__title">Saved</strong>
+                        <p class="alert__desc body-xs">Your preference has been stored.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Card 4: Surface recipe -->
+              <section class="card">
+                <header class="card__head">
+                  <div class="card__headline">
+                    <h3 class="card__title heading heading-sm">Surface recipe</h3>
+                    <p class="card__desc body-sm">Compose a surface with any layout primitive inside.</p>
+                  </div>
+                </header>
+                <div class="card__body">
+                  <div class="surface-card surface-card--highest surface-card--pad-md recipe">
+                    <div class="recipe__top">
+                      <span class="status status--success"><span class="status__dot"></span><span class="status__label">Live</span></span>
+                      <span class="mono-xs">v5.1</span>
+                    </div>
+                    <h3 class="heading heading-sm">Ship with a point of view.</h3>
+                    <p class="body-sm">Use the foundation tokens, then extend the system when the product earns a new pattern.</p>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Card 5: Advanced interactions -->
+              <section class="card">
+                <header class="card__head">
+                  <div class="card__headline">
+                    <h3 class="card__title heading heading-sm">Advanced interactions</h3>
+                    <p class="card__desc body-sm">Bits UI interaction power, restyled as Eyu.</p>
+                  </div>
+                </header>
+                <div class="card__body">
+                  <div class="form-stack">
+                    <div class="advanced-row">
+                      <!-- Dropdown Menu -->
+                      <div class="dropdown-wrapper">
+                        <button type="button" id="eyu-action-menu-btn" class="btn btn--outline btn--sm">
+                          <span>Eyu action menu</span>
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                        <div id="eyu-action-menu-dropdown" class="dropdown-menu surface-card surface-card--highest">
+                          <button type="button" class="dropdown-item"><span>Duplicate</span></button>
+                          <button type="button" class="dropdown-item"><span>Archive</span></button>
+                          <button type="button" class="dropdown-item dropdown-item--danger"><span>Delete</span></button>
+                        </div>
+                      </div>
+
+                      <!-- Popover Trigger -->
+                      <div class="popover-wrapper">
+                        <button type="button" id="eyu-popover-btn" class="btn btn--outline btn--sm">Open popover</button>
+                        <div id="eyu-popover-content" class="popover-box surface-card surface-card--highest">
+                          <p class="body-sm advanced-copy">Every overlay uses Eyu surfaces, outlines, focus rings, and motion.</p>
+                        </div>
+                      </div>
+
+                      <!-- Sheet Trigger -->
+                      <button type="button" id="eyu-sheet-btn" class="btn btn--secondary btn--sm">Open sheet</button>
+                    </div>
+
+                    <!-- Combobox / Colorway Search -->
+                    <div class="field">
+                      <label class="field__label body-sm" for="demo-combobox">Search a colorway</label>
+                      <input id="demo-combobox" type="text" class="input" placeholder="Type a theme name (e.g. Indigo, Moss, Cyber)..." />
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Card 6: 24 Theme Colorways Live Grid -->
+              <section class="card">
+                <header class="card__head">
+                  <div class="card__headline">
+                    <h3 class="card__title heading heading-sm">24 Theme Colorways</h3>
+                    <p class="card__desc body-sm">Click any swatch to apply that theme instantly.</p>
+                  </div>
+                </header>
+                <div class="card__body">
+                  <div class="theme-mini-palette-grid" id="theme-mini-palette-grid">
+                    <!-- Populated by JS -->
+                  </div>
+                </div>
+              </section>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: Emil Kowalski Animation Engineering Lab -->
+        <section id="motion-lab" class="section">
+          <div class="shell">
+            <div class="section-heading">
+              <div>
+                <p class="caption">03 · Animation engineering</p>
+                <h2 class="heading heading-lg">Emil Kowalski motion craft.</h2>
+              </div>
+              <p class="section-heading__copy body-md">
+                Unseen details compound into software people love. Compare common animation anti-patterns against Emil's strict standards.
+              </p>
+            </div>
+
+            <div class="component-grid">
+              <!-- Experiment 1: Easing curves -->
+              <section class="card">
+                <header class="card__head">
+                  <div class="card__headline">
+                    <h3 class="card__title heading heading-sm">Easing: Sluggish vs Punchy</h3>
+                    <p class="card__desc body-sm"><code>ease-in</code> delays start. Custom <code>cubic-bezier(0.23, 1, 0.32, 1)</code> responds instantly.</p>
+                  </div>
+                </header>
+                <div class="card__body">
+                  <div class="motion-stage">
+                    <div class="motion-lane">
+                      <span class="mono-xs" style="color: var(--danger);">ease-in (Sluggish)</span>
+                      <div class="motion-pill motion-pill--bad" id="test-pill-bad">Delay</div>
+                    </div>
+                    <div class="motion-lane">
+                      <span class="mono-xs" style="color: var(--primary);">custom ease-out (Punchy)</span>
+                      <div class="motion-pill motion-pill--good" id="test-pill-good">Instant</div>
+                    </div>
+                  </div>
+                  <div class="cluster gap-sm mt-3">
+                    <button type="button" id="btn-play-easing" class="btn btn--outline btn--sm">Play Easing Test</button>
+                    <span class="mono-xs text-muted">200ms comparison</span>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Experiment 2: Scale Entry -->
+              <section class="card">
+                <header class="card__head">
+                  <div class="card__headline">
+                    <h3 class="card__title heading heading-sm">Entrance: scale(0) vs scale(0.95)</h3>
+                    <p class="card__desc body-sm">Nothing appears from zero pixels in reality. Enter from <code>scale(0.95) + opacity</code>.</p>
+                  </div>
+                </header>
+                <div class="card__body">
+                  <div class="motion-stage flex-center">
+                    <div class="entry-demo-box" id="entry-demo-box">Natural scale(0.95)</div>
+                  </div>
+                  <div class="cluster gap-sm mt-3">
+                    <button type="button" id="btn-play-entry" class="btn btn--outline btn--sm">Trigger Entrance</button>
+                    <span class="mono-xs text-muted">160ms cubic-bezier</span>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Experiment 3: Hold to confirm asymmetric timing -->
+              <section class="card">
+                <header class="card__head">
+                  <div class="card__headline">
+                    <h3 class="card__title heading heading-sm">Asymmetric timing: Hold to confirm</h3>
+                    <p class="card__desc body-sm">Slow where the user is deciding (2s linear), snappy on release (200ms ease-out).</p>
+                  </div>
+                </header>
+                <div class="card__body">
+                  <div class="motion-stage flex-center">
+                    <button type="button" class="hold-btn" id="hold-confirm-btn">
+                      <span class="hold-btn__bar" id="hold-confirm-bar"></span>
+                      <span class="hold-btn__label">Press & Hold (2s)</span>
+                    </button>
+                  </div>
+                  <p class="mono-xs text-muted mt-3" id="hold-status-label">Hold mouse or touch on button</p>
+                </div>
+              </section>
+
+              <!-- Experiment 4: Multi-Variant Switcher (Prototyping) -->
+              <section class="card">
+                <header class="card__head">
+                  <div class="card__headline">
+                    <h3 class="card__title heading heading-sm">Prototyping: Variant Switcher</h3>
+                    <p class="card__desc body-sm">Multi-variant exploration with zero-jank sliding background indicator.</p>
+                  </div>
+                </header>
+                <div class="card__body">
+                  <div class="proto-switcher">
+                    <div class="proto-tabs" id="proto-tabs-container">
+                      <button type="button" class="proto-tab active" data-variant="1">Variant 1</button>
+                      <button type="button" class="proto-tab" data-variant="2">Variant 2</button>
+                      <button type="button" class="proto-tab" data-variant="3">Variant 3</button>
+                      <div class="proto-tab__indicator" id="proto-tab-indicator"></div>
+                    </div>
+                  </div>
+                  <div class="proto-preview-box surface-card surface-card--high surface-card--pad-sm mt-3" id="proto-preview-box">
+                    <p class="body-sm" id="proto-preview-text">Variant 1: Minimalist surface with semantic outline.</p>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: The 23-Skill Pack Catalog -->
+        <section id="skills" class="section section--components">
+          <div class="shell">
+            <div class="section-heading">
+              <div>
+                <p class="caption">04 · The 23-Skill Pack</p>
+                <h2 class="heading heading-lg">Composable engineering skills.</h2>
+              </div>
+              <p class="section-heading__copy body-md">
+                Portable capabilities for AI agents with deterministic rules, failure-path verification, and bundled references.
+              </p>
+            </div>
+
+            <!-- Skill Filters & Search -->
+            <div class="skills-search-bar">
+              <div class="cluster gap-xs" id="skills-filter-pills">
+                <button type="button" class="filter-pill active" data-category="all">All (23)</button>
+                <button type="button" class="filter-pill" data-category="design">Design & Motion (7)</button>
+                <button type="button" class="filter-pill" data-category="frontend">Frontend & Themes (3)</button>
+                <button type="button" class="filter-pill" data-category="engineering">Core Engineering (13)</button>
+              </div>
+              <div class="skills-search-field">
+                <input type="text" id="skills-search-input" class="input" placeholder="Search skills (e.g. animate, eyutheme, swift)..." />
+              </div>
+            </div>
+
+            <!-- Skills Grid -->
+            <div class="component-grid mt-6" id="skills-catalog-grid">
+              <!-- Rendered dynamically by JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 5: Install & Verification -->
+        <section id="install" class="section">
+          <div class="shell">
+            <div class="section-heading">
+              <div>
+                <p class="caption">05 · Installation</p>
+                <h2 class="heading heading-lg">Install into your repository.</h2>
+              </div>
+              <p class="section-heading__copy body-md">
+                Clone locally into <code>.agents</code> or install via compatible skills registries.
+              </p>
+            </div>
+
+            <div class="surface-card surface-card--high surface-card--pad-lg">
+              <div class="cluster gap-md justify-between items-center" style="flex-wrap: wrap;">
+                <div class="install-snippet">
+                  <span class="mono-xs caption" style="color: var(--accent-strong);">Install command</span>
+                  <div class="cluster gap-sm items-center mt-2">
+                    <code class="mono-sm install-code" id="main-install-cmd">npx skills add Joelorbit/Agent-skills</code>
+                    <button type="button" id="main-copy-btn" class="btn btn--outline btn--sm">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      <span>Copy</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="validation-snippet">
+                  <span class="mono-xs caption" style="color: var(--status-success);">Deterministic validation</span>
+                  <div class="mt-2">
+                    <code class="mono-sm" style="color: var(--content-primary);">python3 .agents/scripts/validate_skills.py</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- Side Sheet Drawer Demo -->
+      <aside id="eyu-sheet" class="eyu-sheet" aria-hidden="true">
+        <div class="eyu-sheet__backdrop" id="eyu-sheet-backdrop"></div>
+        <div class="eyu-sheet__panel surface-card surface-card--highest surface-card--pad-lg">
+          <div class="cluster justify-between items-center mb-4">
+            <h3 class="heading heading-md">Eyu utility panel</h3>
+            <button type="button" id="eyu-sheet-close" class="btn btn--ghost btn--sm" aria-label="Close panel">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <p class="body-md advanced-copy">This panel inherits the active colorway and the current canvas mode.</p>
+          <div class="form-stack mt-6">
+            <div class="field">
+              <label class="field__label body-sm" for="sheet-input">Project name</label>
+              <input id="sheet-input" type="text" class="input" value="Agent Skills System" />
+            </div>
+            <button type="button" class="btn btn--primary btn--md" id="sheet-save-btn">Save changes</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Sonner-Style Toast Container -->
+      <div id="eyu-toaster" class="eyu-toaster" aria-live="polite"></div>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <div class="shell">
+          <div class="footer__inner">
+            <span class="mono-sm">EyuTheme · Built for all Eyu frontends</span>
+            <a href="https://github.com/Joelorbit/Mytheme" target="_blank" rel="noreferrer">
+              <span>Read the docs</span>
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+            </a>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

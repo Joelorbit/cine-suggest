@@ -11,15 +11,23 @@ const normalize = (t: string) =>
   t.toLowerCase().replace(/[^a-z0-9]/g, "").trim();
 
 /* ────────────────────────────────────────────── */
-/* GROQ CLIENT                                   */
+/* GROQ CLIENT & MODEL CANDIDATES                */
 /* ────────────────────────────────────────────── */
+
+const CANDIDATE_MODELS = [
+  "qwen/qwen3.8-27b",
+  "openai/gpt-oss-120b",
+  "openai/gpt-oss-20b",
+  "qwen/qwen3.6-27b",
+  "groq/compound"
+];
 
 const getGroq = () => {
   const apiKey = import.meta.env.VITE_GROQ_API_KEY;
-  if (!apiKey) {
-    throw new Error("VITE_GROQ_API_KEY is not set.");
+  if (!apiKey || typeof apiKey !== "string" || !apiKey.trim()) {
+    throw new Error("VITE_GROQ_API_KEY is not set. Please add it to your .env file.");
   }
-  return new Groq({ apiKey, dangerouslyAllowBrowser: true });
+  return new Groq({ apiKey: apiKey.trim(), dangerouslyAllowBrowser: true });
 };
 
 /* ────────────────────────────────────────────── */
@@ -91,12 +99,12 @@ QUALITY STANDARDS:
 - Avoid low-budget direct-to-streaming unless critically acclaimed
 - Prioritize cinematography, storytelling, emotional impact
 
-Return ONLY valid JSON with this structure:
+Return ONLY valid JSON with this exact structure:
 {
   "movies": [
     {
       "title": "Exact Official Title",
-      "matchScore": number (60-100),
+      "matchScore": 92,
       "reason": "Specific 1-2 sentence explanation connecting the film to the mood/query"
     }
   ]
@@ -104,16 +112,37 @@ Return ONLY valid JSON with this structure:
 `;
 
 /* ────────────────────────────────────────────── */
+/* JSON PARSER HELPER                            */
+/* ────────────────────────────────────────────── */
+
+const parseGroqJson = (rawContent: string): { movies?: any[] } => {
+  let content = (rawContent || "").trim();
+  // Strip markdown code fences if present
+  if (content.includes("```")) {
+    content = content.replace(/```(?:json)?([\s\S]*?)```/gi, "$1").trim();
+  }
+  const firstBrace = content.indexOf("{");
+  const lastBrace = content.lastIndexOf("}");
+  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+    content = content.substring(firstBrace, lastBrace + 1);
+  }
+  return JSON.parse(content);
+};
+
+/* ────────────────────────────────────────────── */
 /* MAIN FUNCTION                                 */
 /* ────────────────────────────────────────────── */
 
 export const getMovieRecommendations = async (
   query: string,
-  type: SearchType
+  type: SearchType,
+  retryCount: number = 0
 ): Promise<MovieRecommendation[]> => {
   const groq = getGroq();
   const systemInstruction = buildSystemInstruction();
 
+  // Sanitize query to prevent input overflow or breaking prompts
+  const cleanQuery = (query || "").slice(0, 300).trim();
   const excluded = Array.from(seenTitles).slice(-40).join(", ");
 
   let userPrompt = "";
@@ -121,7 +150,7 @@ export const getMovieRecommendations = async (
   if (type === SearchType.VIBE) {
     userPrompt = `
 I want to watch a film with this mood/feeling:
-"${query}"
+"${cleanQuery}"
 
 Deliver 10 modern films that capture this exact emotional/atmospheric essence.
 
@@ -141,11 +170,11 @@ Include a mix of: dialogue-heavy, visual-driven, music-led, silence-heavy
 EXCLUDE these titles (already seen):
 ${excluded || "None"}
 
-After analyzing the mood "${query}", recommend films that truly embody it.
+After analyzing the mood "${cleanQuery}", recommend films that truly embody it.
 `;
   } else if (type === SearchType.SIMILAR) {
     userPrompt = `
-I loved watching "${query}".
+I loved watching "${cleanQuery}".
 
 Recommend 10 similar but distinct films based on:
 - Emotional resonance and storytelling approach
@@ -166,7 +195,7 @@ REGION MIX: ${randomFrom(regions)}
 EXCLUDE these titles (already seen):
 ${excluded || "None"}
 
-Suggest films that fans of "${query}" would find exciting and fresh.
+Suggest films that fans of "${cleanQuery}" would find exciting and fresh.
 `;
   } else {
     userPrompt = `
@@ -198,61 +227,73 @@ Curate a fresh, surprising, high-quality collection that introduces viewers to g
 `;
   }
 
-  try {
-    const completion = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
-      messages: [
-        { role: "system", content: systemInstruction },
-        { role: "user", content: userPrompt }
-      ],
-      response_format: { type: "json_object" },
-      temperature: 0.95,
-      top_p: 0.95,
-      presence_penalty: 1.0,
-      frequency_penalty: 1.0,
-      max_tokens: 2200
-    });
+  let lastError: Error | null = null;
 
-    const raw = completion.choices[0]?.message?.content ?? "{}";
-    const parsed = JSON.parse(raw);
-
-    const movies = Array.isArray(parsed.movies) ? parsed.movies : [];
-
-    const final: MovieRecommendation[] = [];
-
-    for (const m of movies) {
-      if (!m?.title) continue;
-
-      const key = normalize(m.title);
-      if (seenTitles.has(key)) continue;
-
-      seenTitles.add(key);
-
-      final.push({
-        title: m.title.trim(),
-        matchScore:
-          typeof m.matchScore === "number"
-            ? Math.max(0, Math.min(100, m.matchScore))
-            : 85,
-        reason:
-          typeof m.reason === "string" && m.reason.trim()
-            ? m.reason.trim()
-            : "A strong modern film with distinct style and appeal."
+  for (const model of CANDIDATE_MODELS) {
+    try {
+      const completion = await groq.chat.completions.create({
+        model,
+        messages: [
+          { role: "system", content: systemInstruction },
+          { role: "user", content: userPrompt }
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.7,
+        max_tokens: 2000
       });
-    }
 
-    /* Self-heal if randomness collapses - retry with better diversity instructions */
-    if (final.length < 6) {
-      console.warn(`Only ${final.length} unique films found, retrying with diversity boost...`);
-      return getMovieRecommendations(
-        query + " explore different genres different countries different eras hidden gems",
-        type
-      );
-    }
+      const raw = completion.choices[0]?.message?.content ?? "{}";
+      const parsed = parseGroqJson(raw);
+      const movies = Array.isArray(parsed.movies) ? parsed.movies : [];
 
-    return final.slice(0, 10);
-  } catch (err) {
-    console.error("Groq error:", err);
-    throw new Error("Failed to generate movie catalogue.");
+      const final: MovieRecommendation[] = [];
+
+      for (const m of movies) {
+        if (!m?.title || typeof m.title !== "string") continue;
+
+        const key = normalize(m.title);
+        if (seenTitles.has(key)) continue;
+
+        seenTitles.add(key);
+
+        final.push({
+          title: m.title.trim(),
+          matchScore:
+            typeof m.matchScore === "number"
+              ? Math.max(60, Math.min(100, Math.round(m.matchScore)))
+              : 85,
+          reason:
+            typeof m.reason === "string" && m.reason.trim()
+              ? m.reason.trim()
+              : "A strong modern film with distinct style and appeal."
+        });
+      }
+
+      /* If enough recommendations gathered, return */
+      if (final.length >= 5) {
+        return final.slice(0, 10);
+      }
+
+      /* Self-heal once if randomness collapses */
+      if (final.length < 5 && retryCount < 1) {
+        console.warn(`Only ${final.length} unique films found with ${model}, retrying with diversity boost...`);
+        return getMovieRecommendations(
+          cleanQuery + " explore different genres different countries different eras hidden gems",
+          type,
+          retryCount + 1
+        );
+      }
+
+      if (final.length > 0) {
+        return final.slice(0, 10);
+      }
+    } catch (err: any) {
+      console.warn(`Groq request failed with model ${model}:`, err?.message || err);
+      lastError = err;
+      // Continue to next candidate model
+    }
   }
+
+  console.error("All Groq candidate models failed:", lastError);
+  throw new Error("Failed to generate movie catalogue from Groq AI. Please check your network and API key.");
 };
